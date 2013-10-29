@@ -54,5 +54,8 @@ def initialize_tables():
     ENGINE = create_engine("sqlite:///ratings.db", echo=True)
     Base.metadata.create_all(ENGINE)
 
+def authenticate():
+    pass    
+
 if __name__ == "__main__":
     main()
