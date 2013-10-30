@@ -89,5 +89,8 @@ def get_movie_by_id(movie_id):
     else:
         return movie[0]
 
+def search_for_movie(movie):
+    return session.query(Movie).filter(Movie.title.like("%" + movie + "%")).all()
+
 if __name__ == "__main__":
     main()
