@@ -1,0 +1,21 @@
+
+{% extends "master.html" %}
+{% block body %}
+
+ <h2 class = "movie_title"><a href = "{{movie.url}}">{{movie.title}}</a></h2>
+    {% if session.get("user_id") %}
+        <!-- <form class="rate" action="" method='POST'>
+            <h2 class="login-heading">Rate this movie</h2>
+            1<input type="radio" name="rating" value="1">
+            2<input type="radio" name="rating" value="2">
+            3<input type="radio" name="rating" value="3">
+            4<input type="radio" name="rating" value="4">
+            5<input type="radio" name="rating" value="5">
+            <input type="submit" class="btn btn-primary" value="Submit">
+        </form> -->
+        <div class="rating">
+            <span id = "1" onclick = "test.html">☆</span><span id = "2">☆</span><span>☆</span><span>☆</span><span>☆</span>
+        </div>
+
+    {% endif %}    
+{% endblock %}

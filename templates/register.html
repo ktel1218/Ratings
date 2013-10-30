@@ -1,0 +1,20 @@
+{% extends 'master.html' %} 
+
+    {% block body %}
+
+        {% for message in get_flashed_messages() %}
+        <p>{{message}}</p>
+        {% endfor %}
+
+    <form class="form-group" action="{{url_for("process_registration")}}" method='POST'>
+        <h2>Registration</h2>
+        <input type="email" class="form-control" placeholder="email" name="email">
+        <input type="password" class="form-control" placeholder="password" name="password">
+        <input type="password" class="form-control" placeholder="verify password" name="confirm_password">
+        <input type="text" class="form-control" placeholder="age" name="age">
+        <input type="text" class="form-control" placeholder="zipcode" name="zipcode">
+        Already a user? <a href="{{ url_for("login") }}">Login</a> to your account
+        <input type="submit" class="btn btn-lg btn-primary btn-block" value="Submit">
+    </form>
+
+    {% endblock %}

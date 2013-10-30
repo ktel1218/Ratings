@@ -2,6 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship, backref, scoped_session
 from sqlalchemy import Column, Integer, String, DateTime, Date
+import correlation
 
 
 
@@ -19,6 +20,20 @@ class User(Base):
     password = Column(String(64), nullable=True)
     age = Column(Integer, nullable=True)
     zipcode = Column(String(15), nullable=True)
+
+    def similarity(self, user2):
+
+        rating_pairs = []
+        overlap = {}
+
+        for rating in self.ratings:
+            overlap[rating.movie_id] = rating.rating
+
+        for rating in user2.ratings:
+            if overlap.get(rating.movie_id) != None:
+                rating_pairs.append((overlap.get(rating.movie_id), rating.rating))
+
+        return correlation.pearson(rating_pairs)      
 
 
 class Movie(Base):
@@ -76,6 +91,13 @@ def register_user(email, password, age, zipcode):
     session.add(new_user)
     session.commit()
 
+def get_user_object_by_id(id):
+    user = session.query(User).filter_by(id = id).all()
+    if user == []:
+        return None
+    else:
+        return user[0]
+
 def get_all_users():
     return session.query(User).limit(40).all()
 
@@ -91,6 +113,31 @@ def get_movie_by_id(movie_id):
 
 def search_for_movie(movie):
     return session.query(Movie).filter(Movie.title.like("%" + movie + "%")).all()
+
+def get_rating_by_user_id(movie_id, user_id):
+    rating = session.query(Rating).filter_by(movie_id = movie_id).filter_by(user_id=user_id).all()
+    if rating == []:
+        return None
+    else:
+        return rating[0]
+
+def get_ratings_by_movie_id(movie_id):
+    ratings = session.query(Rating).filter_by(movie_id = movie_id).all()
+    if ratings == []:
+        return None
+    else:
+        return ratings
+
+def rate_movie(movie_id, rating, user_id, time_stamp):
+    existing_rating = get_rating_by_user_id(movie_id, user_id)
+    if existing_rating == None:
+        new_rating = Rating(movie_id = movie_id, rating= rating, user_id=user_id, time_stamp=time_stamp)
+        session.add(new_rating)
+    else:
+        existing_rating.rating = rating
+        existing_rating.time_stamp = time_stamp
+    
+    session.commit()
 
 if __name__ == "__main__":
     main()

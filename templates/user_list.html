@@ -1,0 +1,17 @@
+{% extends 'master.html' %} 
+
+    {% block body %}
+        <table class ="table table-striped">
+        {% for user in users %}
+
+        
+            <tr>
+                <td>
+                    <a href="{{url_for("user_ratings", user_id = user.id)}}">User {{ user.id }}</a> age {{ user.age }} has {{ user.ratings|length }} ratings
+                </td>
+
+            </tr>
+
+        {% endfor %}
+        </table>
+    {% endblock %}

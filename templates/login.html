@@ -1,0 +1,17 @@
+{% extends 'master.html' %} 
+
+    {% block body %}
+
+        {% for message in get_flashed_messages() %}
+        <p>{{message}}</p>
+        {% endfor %}
+
+    <form class="login" action="{{url_for("process_login")}}" method='POST'>
+        <h2 class="login-heading">Please sign in</h2>
+        <input type="text" class="form-control" placeholder="Email" name="email">
+        <input type="password" class="form-control" placeholder="Password" name="password">
+        Not a user? <a href="{{ url_for("register") }}">Register</a> a new account
+        <input type="submit" class="btn btn-lg btn-primary btn-block" value="Submit">
+    </form>
+
+    {% endblock %}
