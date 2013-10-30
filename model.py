@@ -54,8 +54,40 @@ def initialize_tables():
     ENGINE = create_engine("sqlite:///ratings.db", echo=True)
     Base.metadata.create_all(ENGINE)
 
-def authenticate():
-    pass    
+def get_user_from_email(email):
+    user = session.query(User).filter_by(email = email).all()
+    #print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ model user",user
+    if user == []:
+        return None
+    else:
+        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ model user.password",user[0].password
+        return user[0]
+
+def authenticate(email, password):
+    user = session.query(User).filter_by(email = email).all()
+    if user == []:
+        return None
+    else:
+
+        return user[0]
+
+def register_user(email, password, age, zipcode):
+    new_user = User(email = email, password = password, age = age, zipcode = zipcode)
+    session.add(new_user)
+    session.commit()
+
+def get_all_users():
+    return session.query(User).limit(40).all()
+
+def get_ratings_by_user(user_id):
+    return session.query(Rating).filter_by(user_id = user_id).all()
+
+def get_movie_by_id(movie_id):
+    movie = session.query(Movie).filter_by(id = movie_id).all()
+    if movie == []:
+        return None
+    else:
+        return movie[0]
 
 if __name__ == "__main__":
     main()
