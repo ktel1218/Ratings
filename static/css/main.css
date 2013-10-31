@@ -17,3 +17,7 @@ body {
 .btn-primary{
  margin-top: .75em;
 }
+
+.movie {
+    text-align: center;
+}

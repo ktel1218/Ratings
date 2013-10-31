@@ -108,7 +108,7 @@ def rate_movie(movie_id):
     timestamp = datetime.now()
 
     model.rate_movie(movie_id, rating, user_id, timestamp)
-    return redirect(url_for("movie", movie_id = movie_id))
+    return rating
 
 
 @app.route("/search", methods=["POST"])

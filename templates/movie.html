@@ -10,36 +10,73 @@
     <script type=text/javascript src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
     </script>
 
+    <script type="text/javascript">
 
-    <h2 class = "movie_title"><a href = "{{movie.url}}">{{movie.title}}</a></h2>
-    {% if session.get("user_id") %}
-        <form class="rate" action="{{ url_for("rate_movie", movie_id = movie.id) }}" method='POST'>
-           <h2 class="login-heading">Rate this movie</h2>
-            1<input type="radio" name="rating" value="1">
-            2<input type="radio" name="rating" value="2">
-            3<input type="radio" name="rating" value="3">
-            4<input type="radio" name="rating" value="4">
-            5<input type="radio" name="rating" value="5">
-            <input type="submit" class="btn btn-primary" value="Submit">
-        </form>
-        <div class="rating">
-            <span id = "1" onclick = "test.html">☆</span><span id = "2">☆</span><span>☆</span><span>☆</span><span>☆</span>
-        </div>
+$( document ).ready(function() {
+  rating = {{rating}};
+    for (var i = 1; i <= rating; i++) {
+        $("#"+i).toggleClass('clicked');
+    }
+
+    $('.star').click(function (event) {
+
+        $('.star').removeClass("clicked");
+
+        /* grab ids of all stars before it and add class to those too */
+        clicked_star = parseInt($(this).attr("id"));
+        for (var i = 1; i <= clicked_star; i++) {
+            $("#"+i).toggleClass('clicked');
+        };
+        
+        var url = "/movies/{{movie.id}}";
+        var data = {"rating" : event.target.id}
+        $.post(url, data, function(response){
+            $('.rating_display').html(response);
+        })
+    })
+});
+
+    </script>
+
+    <div class = "movie">
+        <h2 class = "movie_title"><a href = "{{movie.url}}">{{movie.title}}</a></h2>
+        {% if session.get("user_id") %}
+           <!--  <form class="rate" action="{{ url_for("rate_movie", movie_id = movie.id) }}" method='POST'>
+               <h2 class="login-heading">Rate this movie</h2>
+                1<input type="radio" name="rating" value="1">
+                2<input type="radio" name="rating" value="2">
+                3<input type="radio" name="rating" value="3">
+                4<input type="radio" name="rating" value="4">
+                5<input type="radio" name="rating" value="5">
+                <input type="submit" class="btn btn-primary" value="Submit">
+            </form> -->
+            
         {% if rated == True %}
 
-        <h2> You rated this movie a: {{rating}} </h2>
+        <h2> 
+            You rated this movie
+        </h2>
 
         {% endif %}
 
         {% if rated == False %}
 
-        <h2> We think you'd give this movie a: {{rating}} </h2>
+        <h2> 
+            Predicted Rating
+        </h2>
 
         {% endif %}
 
-    
+        <div class="rating">
+            <span class="star" id="5">☆</span>
+            <span class="star" id="4">☆</span>
+            <span class="star" id="3">☆</span>
+            <span class="star" id="2">☆</span>
+            <span class="star" id="1">☆</span>
+        </div>
 
-    {% endif %}
+    </div>
 
+        {% endif %}
 
 {% endblock %}
