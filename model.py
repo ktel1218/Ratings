@@ -3,7 +3,7 @@ from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship, backref, scoped_session
 from sqlalchemy import Column, Integer, String, DateTime, Date
 import correlation
-
+import math
 
 
 engine = create_engine("sqlite:///ratings.db", echo = False)
@@ -23,17 +23,68 @@ class User(Base):
 
     def similarity(self, user2):
 
-        rating_pairs = []
-        overlap = {}
-
+        user_ratings = {}
+        paired_ratings = []
         for rating in self.ratings:
-            overlap[rating.movie_id] = rating.rating
+            user_ratings[rating.movie_id] = rating
 
         for rating in user2.ratings:
-            if overlap.get(rating.movie_id) != None:
-                rating_pairs.append((overlap.get(rating.movie_id), rating.rating))
+            user_rating = user_ratings.get(rating.movie_id)
+            if user_rating:
+                paired_ratings.append( (user_rating.rating, rating.rating) )
 
-        return correlation.pearson(rating_pairs)      
+        if paired_ratings:
+            return correlation.pearson(paired_ratings)
+        else:
+            return None
+
+        # rating_pairs = []
+        # overlap = {}
+ 
+        # for rating in self.ratings:
+        #     overlap[rating.movie_id] = rating.rating
+        # for rating in user2.ratings:
+        #     if overlap.get(rating.movie_id) != None:
+        #         rating_pairs.append((overlap.get(rating.movie_id), rating.rating))
+        # correlation_value = correlation.pearson(rating_pairs)
+
+        # if correlation_value > 1:
+        #     correlation_value = math.floor(correlation_value)
+        # elif correlation_value < -1:
+        #     correlation_value = math.ceil(correlation_value)
+
+        # return correlation_value
+
+
+    def prediction(self, movie_id):
+
+        # get other users' ratings of this movie
+        other_ratings = get_ratings_by_movie_id(movie_id)
+        other_users = []
+
+        #create list of all other users who have rated the movie
+        for r in other_ratings:
+            other_users.append(r.user)  
+
+        #create tuple list of the other users and their ratings to input into Pearson Coefficient
+        list_of_compares = []
+
+        for other_u in other_users:
+
+            list_of_compares.append((self.similarity(other_u), other_u.id))
+
+        list_of_sorted_compares = sorted(list_of_compares, reverse=True)
+
+        most_similar_user_id = list_of_sorted_compares[0][1]
+        similarity_coefficient = list_of_sorted_compares[0][0]
+        most_similar_user_rating = (get_rating_by_user_id(movie_id,most_similar_user_id)).rating
+        guessed_rating = similarity_coefficient * most_similar_user_rating
+        
+
+        return guessed_rating
+
+
+
 
 
 class Movie(Base):
@@ -71,11 +122,16 @@ def initialize_tables():
 
 def get_user_from_email(email):
     user = session.query(User).filter_by(email = email).all()
-    #print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ model user",user
     if user == []:
         return None
     else:
-        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ model user.password",user[0].password
+        return user[0]
+
+def get_user_object_by_id(id):
+    user = session.query(User).filter_by(id = id).all()
+    if user == []:
+        return None
+    else:
         return user[0]
 
 def authenticate(email, password):
@@ -91,12 +147,6 @@ def register_user(email, password, age, zipcode):
     session.add(new_user)
     session.commit()
 
-def get_user_object_by_id(id):
-    user = session.query(User).filter_by(id = id).all()
-    if user == []:
-        return None
-    else:
-        return user[0]
 
 def get_all_users():
     return session.query(User).limit(40).all()

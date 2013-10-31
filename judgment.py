@@ -83,24 +83,21 @@ def user_ratings(user_id):
 @app.route("/movies/<movie_id>")
 def movie(movie_id):
     movie = model.get_movie_by_id(movie_id)
-
     user_id = session.get("user_id")
-    user1 = model.get_user_object_by_id(user_id)
-    # get other users' ratings of this movie
-    other_ratings = model.get_ratings_by_movie_id(movie_id)
-    other_users = []
 
-    #create list of all other users who have rated the movie
-    for r in other_ratings:
-        other_users.append(r.user)  
+    ## calls Prediction function if we havent rated it, shows our rating if we have
 
-    #create tuple list of the other users and their ratings to input into Pearson Coefficient
-    list_of_compares = []
-    for other_u in other_users:
-        list_of_compares.append((other_u.id, user1.similarity(other_u)))
+    rating_obj = model.get_rating_by_user_id(movie_id, user_id)
 
+    if rating_obj == None:
+        user = model.get_user_object_by_id(user_id)
+        rating = user.prediction(movie_id)
 
-    return render_template("movie.html", movie = movie, list_of_compares = list_of_compares)
+    else:
+        rating = rating_obj.rating
+
+    ###########pass boolean to tell if rating is predicted or not
+    return render_template("movie.html", movie = movie, rating = rating)
 
 
 @app.route("/movies/<movie_id>", methods = ["POST"])
@@ -112,6 +109,7 @@ def rate_movie(movie_id):
     model.rate_movie(movie_id, rating, user_id, timestamp)
     flash("You rated this movie a " + rating)
     return redirect(url_for("movie", movie_id = movie_id))
+
 
 
 
