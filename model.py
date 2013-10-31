@@ -5,7 +5,6 @@ from sqlalchemy import Column, Integer, String, DateTime, Date
 import correlation
 import math
 
-
 engine = create_engine("sqlite:///ratings.db", echo = False)
 session = scoped_session(sessionmaker(bind=engine, autocommit = False, autoflush = False))
 Base = declarative_base()
@@ -34,27 +33,14 @@ class User(Base):
                 paired_ratings.append( (user_rating.rating, rating.rating) )
 
         if paired_ratings:
-            return correlation.pearson(paired_ratings)
+            correlation_value = correlation.pearson(paired_ratings)
+            if correlation_value > 1:
+                correlation_value = math.floor(correlation_value)
+            elif correlation_value < -1:
+                correlation_value = math.ceil(correlation_value)
+            return correlation_value
         else:
             return None
-
-        # rating_pairs = []
-        # overlap = {}
- 
-        # for rating in self.ratings:
-        #     overlap[rating.movie_id] = rating.rating
-        # for rating in user2.ratings:
-        #     if overlap.get(rating.movie_id) != None:
-        #         rating_pairs.append((overlap.get(rating.movie_id), rating.rating))
-        # correlation_value = correlation.pearson(rating_pairs)
-
-        # if correlation_value > 1:
-        #     correlation_value = math.floor(correlation_value)
-        # elif correlation_value < -1:
-        #     correlation_value = math.ceil(correlation_value)
-
-        # return correlation_value
-
 
     def prediction(self, movie_id):
 
@@ -82,9 +68,6 @@ class User(Base):
         
 
         return guessed_rating
-
-
-
 
 
 class Movie(Base):
@@ -188,6 +171,8 @@ def rate_movie(movie_id, rating, user_id, time_stamp):
         existing_rating.time_stamp = time_stamp
     
     session.commit()
+
+    return rating
 
 if __name__ == "__main__":
     main()

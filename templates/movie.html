@@ -4,8 +4,11 @@
 
 
 {% for message in get_flashed_messages() %}
-        <p>{{message}}</p>
-        {% endfor %}
+    <p>{{message}}</p>
+{% endfor %}
+
+    <script type=text/javascript src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
+    </script>
 
 
     <h2 class = "movie_title"><a href = "{{movie.url}}">{{movie.title}}</a></h2>
@@ -22,18 +25,21 @@
         <div class="rating">
             <span id = "1" onclick = "test.html">☆</span><span id = "2">☆</span><span>☆</span><span>☆</span><span>☆</span>
         </div>
-    {% if rated == True %}
+        {% if rated == True %}
 
-    <h2> You rated this movie a: {{rating}} </h2>
+        <h2> You rated this movie a: {{rating}} </h2>
+
+        {% endif %}
+
+        {% if rated == False %}
+
+        <h2> We think you'd give this movie a: {{rating}} </h2>
+
+        {% endif %}
+
+    
 
     {% endif %}
 
-    {% if rated == False %}
-
-    <h2> We think you'd give this movie a: {{rating}} </h2>
-
-    {% endif %}
-
-    {% endif %}
 
 {% endblock %}

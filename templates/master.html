@@ -5,26 +5,7 @@
         <link href="/static/css/bootstrap.css" rel="stylesheet">
         <link href="/static/css/main.css" rel="stylesheet">
     </head>
-        <script type=text/javascript src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
-        </script>
-        <script type=text/javascript>
-        $( document ).ready(function() {
-  // Handler for .ready() called.
-            $('.rating span').click(function(){
-                console.log( $(this).attr("id") );
-                $.ajax({
-                  type: "POST",
-                  url: "/rate"
-                })
-                  .done(function( msg ) {
-                    alert( "Data Saved: " + msg );
-        
-                  });
-            })
-              
-});
-            
-        </script>
+
     <body>
         <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -65,11 +46,6 @@
         </nav>
 
         <div class="container">
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
             {% block body %}{% endblock %}
         </div>
     </body>

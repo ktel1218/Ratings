@@ -6,23 +6,14 @@ body {
     background-color: #eee;
 }
 
-form.signin{
-    width: 330px;
-    margin: 50px auto;
+.login .form-control {
+    margin-bottom:.75em;
 }
 
-form.signin input.form-control {
-    margin-bottom: 5px;
+.container {
+    margin-top: 100px;
 }
 
-form.signin input.btn {
-    margin: 50px auto;
-}
-
-form.submit_form{
-    width: 330px;
-    margin: 50px auto;
-}
-#posts_content {
-    margin: 50px auto;
+.btn-primary{
+ margin-top: .75em;
 }

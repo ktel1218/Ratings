@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, session, url_for, flash, jsonify
+from flask import Flask, render_template, redirect, request, session, url_for, flash
 import model
 from datetime import datetime
 
@@ -98,7 +98,6 @@ def movie(movie_id):
         rating = rating_obj.rating
         rated = True
 
-    ###########pass boolean to tell if rating is predicted or not
     return render_template("movie.html", movie = movie, rating = rating, rated = rated)
 
 
@@ -112,22 +111,6 @@ def rate_movie(movie_id):
     return redirect(url_for("movie", movie_id = movie_id))
 
 
-
-
-# Test for JSON/jQuery
-# @app.route("/movies/<movie_id>")
-# def movie(movie_id):
-#     movie = model.get_movie_by_id(movie_id)
-#     return render_template("test.html", movie = movie)
-
-# @app.route("/rate", methods=['POST'])
-# def ajax_request():
-#     # value = request.form.get("star_value")
-#     # model.rate_movie(value, userid, movieid)
-#     return "hey this was something cool"
-
-
-    #view movie, and if logged in, shows rating/allows rating/allows edit of rating
 @app.route("/search", methods=["POST"])
 def search():
     movie =  request.form.get("search")
@@ -138,7 +121,6 @@ def search():
     return render_template("search.html", results = results)
 
 
-
 @app.route("/logout")
 def logout():
     session.clear()
@@ -147,5 +129,3 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug = True)
-
-
