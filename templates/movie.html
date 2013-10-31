@@ -22,9 +22,17 @@
         <div class="rating">
             <span id = "1" onclick = "test.html">☆</span><span id = "2">☆</span><span>☆</span><span>☆</span><span>☆</span>
         </div>
+    {% if rated == True %}
 
-    <h2> RATING : {{rating}}
+    <h2> You rated this movie a: {{rating}} </h2>
 
+    {% endif %}
+
+    {% if rated == False %}
+
+    <h2> We think you'd give this movie a: {{rating}} </h2>
+
+    {% endif %}
 
     {% endif %}
 

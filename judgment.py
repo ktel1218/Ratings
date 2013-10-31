@@ -84,6 +84,7 @@ def user_ratings(user_id):
 def movie(movie_id):
     movie = model.get_movie_by_id(movie_id)
     user_id = session.get("user_id")
+    rated = False
 
     ## calls Prediction function if we havent rated it, shows our rating if we have
 
@@ -95,9 +96,10 @@ def movie(movie_id):
 
     else:
         rating = rating_obj.rating
+        rated = True
 
     ###########pass boolean to tell if rating is predicted or not
-    return render_template("movie.html", movie = movie, rating = rating)
+    return render_template("movie.html", movie = movie, rating = rating, rated = rated)
 
 
 @app.route("/movies/<movie_id>", methods = ["POST"])
@@ -107,7 +109,6 @@ def rate_movie(movie_id):
     timestamp = datetime.now()
 
     model.rate_movie(movie_id, rating, user_id, timestamp)
-    flash("You rated this movie a " + rating)
     return redirect(url_for("movie", movie_id = movie_id))
 
 
